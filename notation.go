@@ -393,6 +393,7 @@ func generateAnnotations(signerInfo *signature.SignerInfo) (map[string]string, e
 
 func (outcome *VerificationOutcome) GetUserMetadata() (map[string]string, error) {
 	var payload envelope.Payload
+
 	err := json.Unmarshal(outcome.EnvelopeContent.Payload.Content, &payload)
 	if err != nil {
 		return nil, errors.New("Failed to unmarshal the payload content in the signature blob to envelope.Payload")
@@ -403,4 +404,19 @@ func (outcome *VerificationOutcome) GetUserMetadata() (map[string]string, error)
 	}
 
 	return payload.TargetArtifact.Annotations, nil
+}
+
+func GetDescriptorFromPayload(payload *signature.Payload) (*ocispec.Descriptor, error) {
+	if payload == nil {
+		return nil, errors.New("Empty payload")
+	}
+
+	var parsedPayload envelope.Payload
+
+	err := json.Unmarshal(payload.Content, &parsedPayload)
+	if err != nil {
+		return nil, errors.New("Failed to unmarshall the payload content to envelope.Payload")
+	}
+
+	return &parsedPayload.TargetArtifact, nil
 }
