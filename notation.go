@@ -184,6 +184,9 @@ type ValidationResult struct {
 // the verification level and results for each verification type that was
 // performed.
 type VerificationOutcome struct {
+	// Signature Descriptor
+	SignatureDescriptor ocispec.Descriptor
+
 	// RawSignature is the signature envelope blob
 	RawSignature []byte
 
@@ -376,6 +379,7 @@ func Verify(ctx context.Context, verifier Verifier, repo registry.Repository, ve
 			}
 			// at this point, the signature is verified successfully. Add
 			// it to the verificationOutcomes.
+			outcome.SignatureDescriptor = sigManifestDesc
 			verificationOutcomes = append(verificationOutcomes, outcome)
 			logger.Debugf("Signature verification succeeded for artifact %v with signature digest %v", artifactDescriptor.Digest, sigManifestDesc.Digest)
 
